@@ -1,6 +1,7 @@
 # main_request.py
 import uvicorn
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Form
+from starlette.responses import RedirectResponse
 
 app = FastAPI()
 
@@ -55,3 +56,15 @@ async def create_item_form(request: Request):
     print("received_data:", data)
     return {"received_data": data}
 
+
+# Redirect(Get -> Get)
+@app.get("/redirect")
+async def redirect_only(comment: str | None = None):
+    print(f"redirect {comment}")
+    return RedirectResponse(url=f"/resp_html/3?item_name={comment}")
+
+# Redirect(Post -> Get)
+@app.post("/create_redirect")
+async def create_item(item_id: int = Form(), item_name: str = Form()):
+    print(f"item_id: {item_id} item name: {item_name}")
+    return RedirectResponse(url=f"/resp_html/{item_id}?item_name={item_name}")
